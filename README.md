@@ -1,1 +1,8 @@
-# My name is Altynai. I am 16 years old, and I am studying at Ala-Too University
+#Libraries used:
+#Requests;
+#Beautiful Soup;
+#pyTelegramBotAPI
+#Telegram
+
+#This Bot can be used by role-playing communities that need help in managing the game online through text.
+#It includes a little intro into the main rules of writing, dice and a basic city generator. Have a nice game!
