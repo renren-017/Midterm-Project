@@ -1,16 +1,15 @@
 import telebot
 from telebot import TeleBot, types
 
-import config
 import random
 import requests
 from bs4 import BeautifulSoup
 
-bot = telebot.TeleBot(config.TOKEN)
+bot = telebot.TeleBot('TOKEN')
 
 text1 = """- Здравствуй! Неужто новичок? Я твой <b>{1.first_name}</b>. Но
- ты... Как там тебя... {0.first_name}! Не обольщайся. Это моя работа, и всё
- тут! - Ты хоть знаешь, что такое текстовая ролевая?"""
+ ты... Как там тебя.. {0.first_name}! Не обольщайся. Это моя работа,
+ и всё тут! - Ты хоть знаешь, что такое текстовая ролевая?"""
 
 
 @bot.message_handler(commands=['start'])
@@ -56,6 +55,7 @@ def KnowIt(call):
 
 
 text3 = """Основной функционал:
+\n/get_top10rp - информация о десятке топ НРИ
 \n/dice - бросок кубика D12
 \n/r_city - вывод рандомного города:
 \n/quick_access - клавиатура для упрощения
@@ -103,6 +103,47 @@ def randcit(message):
         i = i + 1
 
     bot.send_message(message.chat.id, random.choice(a))
+
+
+@bot.message_handler(commands=['get_top10rp'])
+def top7(message):
+
+    URL = 'https://geekster.ru/top10/top-7-nastolnyh-rolevyh-igr/'
+    HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; '
+               'x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+               'Chrome/86.0.4240.111 Safari/537.36',
+               'accept': '*/*'}
+
+    def get_html(url, params=None):
+        t = requests.get(url, headers=HEADERS)
+        return t
+
+    def get_top3(html):
+        soup = BeautifulSoup(html, 'html.parser')
+        cname = soup.find_all('div', class_='wpb_column vc_column_container '
+                              'vc_col-sm-12')
+
+        info = []
+        for i in cname[0]:
+            """ info_content = i.find('div', class_='vc_column-inner') """
+            info.append({
+                'name': i.find('div', class_='wpb_wrapper').get_text
+                (strip=True)
+                })
+
+        e = info
+        return e
+
+    html = get_html(URL)
+    text4 = str(get_top3(html.text))
+
+    with open('\\Users\\Алтынай\\Desktop\\Mid\\Pathfinder-Kingmaker-'
+              'Siege-Art.jpg', 'rb') as f:
+        bot.send_photo(message.chat.id, f, caption=text4)
+
+    bot.send_message(message.chat.id, '<a href="https://geekster.ru/top10/'
+                     'top-7-nastolnyh-rolevyh-igr/">Нажми, чтобы узнать '
+                     'больше!</a>', parse_mode='html')
 
 
 @bot.message_handler(commands=['dice'])
